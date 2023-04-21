@@ -1,18 +1,18 @@
 const request = require('supertest');
 const app = require('../app');
-const {getRequest, postRequest} = require('../clients/httpClient.js');
+const { getRequest, postRequest } = require('../clients/httpClient');
 
 require('dotenv').config();
 
-jest.mock('../clients/httpClient.js')
+jest.mock('../clients/httpClient.js');
 
 const todos = {
     id: 1234,
     user_id: 1099700,
-    title: "YU",
+    title: 'YU',
     due_on: null,
-    status: "pending"
-}
+    status: 'pending',
+};
 
 describe('GET /todos/:user_id', () => {
     it('return todos with id', async () => {
@@ -23,31 +23,36 @@ describe('GET /todos/:user_id', () => {
         expect(res.body).toStrictEqual([todos]);
 
         expect(getRequest).toHaveBeenCalledTimes(1);
-        expect(getRequest).toHaveBeenCalledWith('https://gorest.co.in/public/v2/users/1099700/todos')
+        expect(getRequest).toHaveBeenCalledWith(
+            'https://gorest.co.in/public/v2/users/1099700/todos',
+        );
     });
 });
 
 describe('POST /todos/:user_id/new', () => {
     it('add a todos', async () => {
-        const todos = {
+        const todosPost = {
             user_id: 1099700,
             name: 'Name',
             email: 'email@gmail.com',
-            status: 'active'
+            status: 'active',
         };
 
-        postRequest.mockReturnValue(todos);
-        const res = await request(app)
-        .post(`/todos/${todos.user_id}/new`)
-        .send(todos);
+        postRequest.mockReturnValue(todosPost);
+        const res = await request(app).post(`/todos/${todosPost.user_id}/new`).send(todosPost);
         expect(res.statusCode).toBe(201);
-        expect(res.body).toStrictEqual(todos);
+        expect(res.body).toStrictEqual(todosPost);
 
         expect(postRequest).toHaveBeenCalledTimes(1);
         expect(postRequest).toHaveBeenCalledWith(
-            `https://gorest.co.in/public/v2/users/${todos.user_id}/todos`,
+            `https://gorest.co.in/public/v2/users/${todosPost.user_id}/todos`,
             'POST',
-            todos
+            todosPost,
         );
+    });
+
+    it('add a todos', async () => {
+        const res = await request(app).post('/todos/1099700/new').send({});
+        expect(res.statusCode).toBe(400);
     });
 });

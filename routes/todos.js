@@ -1,5 +1,5 @@
 const express = require('express');
-const {getTodos, postTodos} = require('../controllers/users.todos')
+const { getTodos, postTodos } = require('../controllers/users.todos');
 
 const router = express.Router();
 
@@ -8,10 +8,10 @@ const time = (req, res, next) => {
 
     res.on('finish', () => {
         const end = process.hrtime(start);
-        console.log(`Request was completed ${end[0]} second ${end[1]} nanoseconds`)
+        console.log(`Request was completed ${end[0]} second ${end[1]} nanoseconds`);
     });
     next();
-}
+};
 
 router.get('/:user_id', time, getTodos);
 
